@@ -15,27 +15,27 @@ def createUserFile(slack_client):
     print("Beginning Slack user retrieval")
 
     i = 0
+
     for member in members:
         SlackID = member['id']
         name = member['name']
+        dm_channel = slack_client.api_call('im.open', user=SlackID)['channel']['id']
 
-        slack_users.append([SlackID,name])
-       
+        slack_users.append([SlackID,name,dm_channel])
         i += 1
-
-        print("{} Slack records processed...".format(i))
+        print("Processed: {}/{}".format(i,len(members)))
 
     print("creating a file")
 
     userFile = open("allUsers.user","w")
 
-    for userID, userName in slack_users:
+    for userID, userName, dmChannel in slack_users:
         userName.replace("."," ")
         userName = userName.title()
         userID = userID.upper()
 
 
-        userFile.write("{}|{}\n".format(userName,userID))
+        userFile.write("{}|{}|{}\n".format(userName,userID,dmChannel))
 
     userFile.close()
 
